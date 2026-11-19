@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+/* Design tokens from the "Pegasus 43 Mobile Product Page" doc */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --color-ink: #111111;
+  --color-muted: #5f5f5f;
+  --color-line: #d4d4d4;
+  --color-surface: #f5f5f5;
+  --color-skeleton: #ececec;
+  --color-backdrop: #f0f0f0;
+  --color-error: #c8102e;
+  --color-warn: #a84a00;
+
+  --animate-shimmer: shimmer 1.4s ease-in-out infinite;
+
+  @keyframes shimmer {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-backdrop font-sans text-ink antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@layer components {
+  /* Loading placeholder: always the exact size of the image it stands in for. */
+  .skeleton {
+    @apply relative overflow-hidden bg-skeleton;
+  }
+
+  .skeleton::after {
+    content: "";
+    @apply pointer-events-none absolute inset-0 animate-shimmer;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  }
+
+  .skeleton[data-loaded="true"]::after {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton::after {
+      animation: none;
+    }
+  }
+
+  /* Horizontal rails: swipe sideways, no visible scrollbar. */
+  .rail {
+    @apply flex snap-x snap-mandatory gap-2 overflow-x-auto overscroll-x-contain;
+    scrollbar-width: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Expands a small control's tap area to 44px tall without changing its layout size. */
+  .hit-44 {
+    @apply relative;
+  }
+
+  .hit-44::before {
+    content: "";
+    @apply absolute inset-x-0 top-1/2 h-11 -translate-y-1/2;
+  }
+}

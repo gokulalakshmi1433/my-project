@@ -1,0 +1,59 @@
+{
+  "_note": "PLACEHOLDER COPY. Everything in this file is sample content for the client review until real copy, ratings, reviews and images are supplied. Size, stock, price and product data come from 'Pegasus 43 size and stock list.json'.",
+  "description": "A daily running shoe built for easy miles and everyday wear, in Black/White-Volt.",
+  "images": [
+    { "src": "/images/pdp-1.svg", "alt": "Nike Pegasus 43 in Black/White-Volt, side view" },
+    { "src": "/images/pdp-2.svg", "alt": "Nike Pegasus 43, view from the other side" },
+    { "src": "/images/pdp-3.svg", "alt": "Nike Pegasus 43, side view on a light background" },
+    { "src": "/images/pdp-4.svg", "alt": "Nike Pegasus 43, detail view" }
+  ],
+  "rating": {
+    "average": 4.6,
+    "count": 128,
+    "distribution": { "5": 92, "4": 24, "3": 7, "2": 3, "1": 2 }
+  },
+  "benefits": {
+    "heading": "Why you'll love it",
+    "items": [
+      "Cushioning that keeps easy runs and long days on your feet comfortable.",
+      "Made for everyday running, from short recovery jogs to weekend long runs.",
+      "A breathable upper that helps keep your feet cool mile after mile."
+    ]
+  },
+  "specs": [
+    { "id": "details", "title": "Product details", "body": "__FROM_STOCK__" },
+    { "id": "materials", "title": "Materials", "body": "Upper, midsole and outsole materials to be confirmed." },
+    { "id": "sustainability", "title": "Sustainability and selling points", "body": "Recycled content and eco details to be confirmed." },
+    { "id": "shipping", "title": "Shipping and returns", "body": "Shipping and returns policy text to be supplied." }
+  ],
+  "ugc": {
+    "heading": "Worn by runners",
+    "items": [
+      { "src": "/images/ugc-1.svg", "user": "@morning.miles", "video": true },
+      { "src": "/images/ugc-2.svg", "user": "@citystrides", "video": false },
+      { "src": "/images/ugc-3.svg", "user": "@runwithria", "video": false },
+      { "src": "/images/ugc-4.svg", "user": "@trackdays", "video": true },
+      { "src": "/images/ugc-5.svg", "user": "@parkrun.jo", "video": false },
+      { "src": "/images/ugc-6.svg", "user": "@longrunsunday", "video": false }
+    ]
+  },
+  "reviews": [
+    { "stars": 5, "title": "Comfortable from the first run", "text": "Wore them straight out of the box for a 10k and had no hot spots at all. The cushioning feels soft without being mushy, and they still feel fresh after a few weeks of easy runs.", "name": "Priya S.", "date": "2026-11-12" },
+    { "stars": 5, "title": "My daily trainer now", "text": "I rotate between a few shoes and these have become the pair I reach for most. Good grip on wet pavement and the fit is true to size for me.", "name": "Daniel K.", "date": "2026-11-08" },
+    { "stars": 4, "title": "Great, slightly narrow", "text": "Really like the ride and the look. The toe box is a little narrow for my feet so I went up half a size, which fixed it.", "name": "Meera R.", "date": "2026-11-03" },
+    { "stars": 5, "title": "Good for walking too", "text": "Bought these for running but I end up wearing them all day at work. Light, comfortable and the colourway goes with everything.", "name": "Tom W.", "date": "2026-10-29" },
+    { "stars": 4, "title": "Solid all-rounder", "text": "Nothing flashy, just a dependable shoe. I would like a bit more energy return on faster runs but for easy miles it is excellent.", "name": "Aisha B.", "date": "2026-10-22" },
+    { "stars": 5, "title": "Fits like my old pair", "text": "Same size as my previous Pegasus and it fits the same. Upper is more breathable than I expected.", "name": "Luis M.", "date": "2026-10-18" },
+    { "stars": 3, "title": "Okay, laces too long", "text": "Comfortable shoe but the laces are very long and keep coming undone. Swapped them out and it is fine now.", "name": "Hannah C.", "date": "2026-10-11" },
+    { "stars": 5, "title": "Half marathon tested", "text": "Ran my first half in these. Feet felt good the whole way and no blisters afterwards.", "name": "Arjun P.", "date": "2026-10-04" }
+  ],
+  "related": {
+    "heading": "Complete your run",
+    "items": [
+      { "name": "Cushioned running socks, 3 pairs", "price": 18, "src": "/images/rel-socks.svg" },
+      { "name": "Shoe-cleaning kit", "price": 22, "src": "/images/rel-clean.svg" },
+      { "name": "Supportive running insoles", "price": 30, "src": "/images/rel-insoles.svg" },
+      { "name": "Nike Pegasus 43, White/Volt", "price": 140, "src": "/images/rel-pegasus-white.svg" }
+    ]
+  }
+}
