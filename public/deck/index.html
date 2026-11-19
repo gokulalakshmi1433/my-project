@@ -207,7 +207,7 @@ section.accent { background: var(--volt); color: var(--ink); }
 <h2 class="headline">A mobile-first page where every block above the sizes has a fixed height.</h2>
 <hr class="rule">
 <div style="display:flex; gap:64px; align-items:flex-start;">
-<img class="shot rise" style="--i:1; width:240px; height:520px; flex:none;" src="../screenshots/01-initial.png" alt="Live Pegasus 43 page on a 375 px phone: title, description, $140 price, shoe photo, Select size row, US M, US W and EU buttons, and the size grid starting at 3.5 Only 1 left">
+<img class="shot rise" style="--i:1; width:240px; height:520px; flex:none;" src="img/phone-initial.png" alt="Live Pegasus 43 page on a 375 px phone: title, description, $140 price, shoe photo, Select size row, US M, US W and EU buttons, and the size grid starting at 3.5 Only 1 left">
 <div class="rise" style="--i:2; flex:1; display:flex; flex-direction:column; gap:24px;">
 <table class="tbl">
 <tr><th style="width:32%;">Block</th><th style="width:22%;">Size</th><th style="width:46%;">Why it can’t move</th></tr>
@@ -420,6 +420,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'End') show(slides.length - 1);
   if (e.key === 'n' || e.key === 'N') notes.classList.toggle('show');
 });
+addEventListener('hashchange', () => { const n = parseInt(location.hash.replace('#slide-', ''), 10); if (n && n - 1 !== i) show(n - 1); });
 addEventListener('resize', fit);
 fit();
 show(i);

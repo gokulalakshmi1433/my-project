@@ -67,7 +67,7 @@ The requests made to Claude Code during the performance pass, and what was done 
 
 - 14 slides: Context, Impact, Fix, Approach, Measures, then Built with, Key insights and What's next. Speaker notes come from the narration.
 - From DoorDash: headlines that state the takeaway, "So what" boxes, source lines. From Shopify: topic tags, a numbered step timeline, "Built with", key insights, Now / Next / Later.
-- Saved in the repo as `docs/deck/index.html`, with images in `docs/deck/img/` and `docs/screenshots/`.
+- Saved as `public/deck/index.html` with images in `public/deck/img/`, so Vercel serves it at `/deck` (a redirect in `next.config.ts` points `/deck` to `/deck/index.html`). Files in `docs/` are not part of the website; only `app/` pages and `public/` files are.
 - Sales impact is not measured: the Impact slide has a `[__%]` placeholder for the add-to-cart rate after a size tap.
 
 ## Prompts to reuse
