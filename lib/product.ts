@@ -1,4 +1,5 @@
-import stockRows from "@/Pegasus 43 size and stock list.json";
+// Stock source: snapshot of 8 December 2026. The earlier list is kept at "/Pegasus 43 size and stock list.json".
+import stockRows from "@/data/Pegasus Size and Stock Snapshot, 8 December 2026.json";
 import content from "@/data/content.json";
 
 export type StockStatus = "in_stock" | "low_stock" | "sold_out";
