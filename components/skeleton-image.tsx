@@ -18,12 +18,18 @@ const SLOW_MS = 1500;
 
 export function SkeletonImage({ src, alt, width, height, eager = false, className = "" }: Props) {
   const [imageReady, setImageReady] = useState(false);
-  const [held, setHeld] = useState(true);
+  // Visible from the server HTML: the photo must not wait for JavaScript to show.
+  // Only the `?slow` demo hides it, and only after hydration.
+  const [held, setHeld] = useState(false);
 
   useEffect(() => {
-    const slow = new URLSearchParams(window.location.search).has("slow");
-    const t = setTimeout(() => setHeld(false), slow ? SLOW_MS : 0);
-    return () => clearTimeout(t);
+    if (!new URLSearchParams(window.location.search).has("slow")) return;
+    const hide = setTimeout(() => setHeld(true), 0);
+    const show = setTimeout(() => setHeld(false), SLOW_MS);
+    return () => {
+      clearTimeout(hide);
+      clearTimeout(show);
+    };
   }, []);
 
   // A cached image can finish loading before React hydrates and attaches onLoad.
@@ -49,8 +55,9 @@ export function SkeletonImage({ src, alt, width, height, eager = false, classNam
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
         onLoad={() => setImageReady(true)}
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-300 motion-reduce:transition-none ${
-          loaded ? "opacity-100" : "opacity-0"
+        // z-[1] paints the photo above the shimmer, so the shimmer shows only until the photo arrives.
+        className={`absolute inset-0 z-[1] h-full w-full object-cover transition-opacity duration-300 motion-reduce:transition-none ${
+          held ? "opacity-0" : "opacity-100"
         }`}
       />
     </div>

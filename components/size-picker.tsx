@@ -25,8 +25,10 @@ export function SizePicker() {
 
   return (
     <div ref={sizesRef}>
-      {/* 1.7: 20px row. The error replaces the label so nothing below moves. */}
-      <div className="mt-3 flex h-5 items-center justify-between">
+      {/* 1.7: 20px row. The error replaces the label so nothing below moves.
+          The label column is fixed at 116px (wide enough for the 115px error on one line),
+          so swapping "Select size" for the error never slides the size-system switch sideways. */}
+      <div className="mt-3 grid h-5 grid-cols-[116px_1fr_auto] items-center gap-2 whitespace-nowrap">
         {showSizeError ? (
           <p id="size-label" role="alert" className="text-[12px] leading-5 font-semibold text-error">
             Please select a size
@@ -37,7 +39,7 @@ export function SizePicker() {
           </p>
         )}
 
-        <div className="flex items-center gap-1" role="group" aria-label="Size system">
+        <div className="flex items-center gap-1 justify-self-center" role="group" aria-label="Size system">
           {UNITS.map((u) => (
             <button
               key={u}
