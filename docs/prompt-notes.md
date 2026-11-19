@@ -61,6 +61,15 @@ The requests made to Claude Code during the performance pass, and what was done 
 - The repo was imported into Vercel by the owner: https://my-project-sable-seven-91.vercel.app/
 - Live Lighthouse mobile score: 99. Seven size-tap screenshots and notes in [live-size-tap-test.md](live-size-tap-test.md).
 
+## 7. Case study deck
+
+> Make the presentation deck from the Context, Impact, Fix, Approach, Measures narration, using the DoorDash HTML and Shopify PDF decks as references. The output should be an HTML file everyone can access.
+
+- 14 slides: Context, Impact, Fix, Approach, Measures, then Built with, Key insights and What's next. Speaker notes come from the narration.
+- From DoorDash: headlines that state the takeaway, "So what" boxes, source lines. From Shopify: topic tags, a numbered step timeline, "Built with", key insights, Now / Next / Later.
+- Saved as `public/deck/index.html` with images in `public/deck/img/`, so Vercel serves it at `/deck` (a redirect in `next.config.ts` points `/deck` to `/deck/index.html`). Files in `docs/` are not part of the website; only `app/` pages and `public/` files are.
+- Sales impact is not measured: the Impact slide has a `[__%]` placeholder for the add-to-cart rate after a size tap.
+
 ## Prompts to reuse
 
 Short versions of the requests above, for the next performance pass:

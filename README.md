@@ -13,6 +13,8 @@ Open http://localhost:3000. Add `?slow=1` to hide images for 1.5s after the page
 
 Live site: https://my-project-sable-seven-91.vercel.app/ ([live size-tap test](docs/live-size-tap-test.md)).
 
+Case study deck: https://my-project-sable-seven-91.vercel.app/deck (source: [public/deck/index.html](public/deck/index.html); ←/→ to move, N for speaker notes).
+
 Performance trace results and fixes: [docs/performance-trace.md](docs/performance-trace.md). Notes on the requests behind them: [docs/prompt-notes.md](docs/prompt-notes.md).
 
 ## Layout rules
