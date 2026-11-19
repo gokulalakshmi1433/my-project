@@ -11,6 +11,8 @@ npm run dev
 
 Open http://localhost:3000. Add `?slow=1` to hide images for 1.5s after the page loads and see the loading skeletons.
 
+Live site: https://my-project-sable-seven-91.vercel.app/ ([live size-tap test](docs/live-size-tap-test.md)).
+
 Performance trace results and fixes: [docs/performance-trace.md](docs/performance-trace.md). Notes on the requests behind them: [docs/prompt-notes.md](docs/prompt-notes.md).
 
 ## Layout rules

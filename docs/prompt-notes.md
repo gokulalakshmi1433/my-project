@@ -53,6 +53,14 @@ The requests made to Claude Code during the performance pass, and what was done 
 - Moved the switch to its own 32 px row. Each button uses the size buttons' 56 px column and 8 px gap, so they line up with the first three sizes.
 - Size grid is 40 px lower (first screen 527 px) and still moves 0 px.
 
+## 6. Stock snapshot, Vercel and live test
+
+> Add the Pegasus size and stock snapshot, 8 December 2026 document. Link the repo to Vercel. Run the live Lighthouse test on the mobile URL (90+). Screenshots of the sizes being tapped, with notes.
+
+- Added the snapshot as `data/Pegasus Size and Stock Snapshot, 8 December 2026.json` and switched the page to it (PR #3).
+- The repo was imported into Vercel by the owner: https://my-project-sable-seven-91.vercel.app/
+- Live Lighthouse mobile score: 99. Seven size-tap screenshots and notes in [live-size-tap-test.md](live-size-tap-test.md).
+
 ## Prompts to reuse
 
 Short versions of the requests above, for the next performance pass:
