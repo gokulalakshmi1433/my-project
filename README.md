@@ -22,6 +22,7 @@ Performance trace results and fixes: [docs/performance-trace.md](docs/performanc
 
 ## Data
 
-- `Pegasus 43 size and stock list.json`: sizes, stock, price, style code (source of truth).
+- `data/Pegasus Size and Stock Snapshot, 8 December 2026.json`: sizes, stock, price, style code (source of truth, read by `lib/product.ts`).
+- `Pegasus 43 size and stock list.json`: the earlier stock list, kept for comparison. Not used by the page.
 - `data/content.json`: placeholder copy, ratings, reviews and image paths until real content is supplied.
 - `public/images/`: placeholder images.
