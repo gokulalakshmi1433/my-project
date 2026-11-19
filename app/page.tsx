@@ -20,7 +20,7 @@ export default function ProductPage() {
     <PurchaseProvider>
       {/* 375px column, 16px side padding → 343px content width */}
       <main className="mx-auto min-h-dvh w-full max-w-[375px] overflow-x-clip bg-white px-4 pt-3 pb-16">
-        {/* ── 1. Above the fold: 487px ── */}
+        {/* ── 1. Above the fold: 527px ── */}
         <section aria-label="Product summary">
           {/* 1.1 Heading: 18px semibold / 24px */}
           <h1 className="truncate text-[18px] leading-6 font-semibold">{product.name}</h1>
@@ -49,7 +49,7 @@ export default function ProductPage() {
           {/* 1.5 + 1.6 Image 343×257 with same-size skeleton */}
           <Gallery images={content.images} />
 
-          {/* 1.7 – 1.10 Size label, switch, guide, buttons, notes */}
+          {/* 1.7 – 1.10 Size label and guide, size-system row, size buttons, notes */}
           <SizePicker />
         </section>
 

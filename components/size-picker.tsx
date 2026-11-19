@@ -26,9 +26,8 @@ export function SizePicker() {
   return (
     <div ref={sizesRef}>
       {/* 1.7: 20px row. The error replaces the label so nothing below moves.
-          The label column is fixed at 116px (wide enough for the 115px error on one line),
-          so swapping "Select size" for the error never slides the size-system switch sideways. */}
-      <div className="mt-3 grid h-5 grid-cols-[116px_1fr_auto] items-center gap-2 whitespace-nowrap">
+          Label on the left, Size guide pinned right, so the wider error text moves nothing. */}
+      <div className="mt-3 flex h-5 items-center justify-between whitespace-nowrap">
         {showSizeError ? (
           <p id="size-label" role="alert" className="text-[12px] leading-5 font-semibold text-error">
             Please select a size
@@ -39,22 +38,6 @@ export function SizePicker() {
           </p>
         )}
 
-        <div className="flex items-center gap-1 justify-self-center" role="group" aria-label="Size system">
-          {UNITS.map((u) => (
-            <button
-              key={u}
-              type="button"
-              onClick={() => setUnit(u)}
-              aria-pressed={unit === u}
-              className={`hit-44 h-5 rounded px-1.5 text-[12px] leading-5 ${
-                unit === u ? "bg-ink font-semibold text-white" : "text-muted hover:text-ink"
-              } focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ink`}
-            >
-              {unitNames[u]}
-            </button>
-          ))}
-        </div>
-
         <a
           href="#spec-details"
           onClick={openSizeGuide}
@@ -62,6 +45,24 @@ export function SizePicker() {
         >
           Size guide
         </a>
+      </div>
+
+      {/* Size system: its own 32px row. Each button uses the size buttons' 56px column and 8px gap,
+          so US M / US W / EU line up with the first three sizes below. */}
+      <div className="mt-2 flex h-8 gap-2" role="group" aria-label="Size system">
+        {UNITS.map((u) => (
+          <button
+            key={u}
+            type="button"
+            onClick={() => setUnit(u)}
+            aria-pressed={unit === u}
+            className={`hit-44 h-8 w-14 shrink-0 rounded-lg border text-[12px] leading-none ${
+              unit === u ? "border-ink bg-ink font-semibold text-white" : "border-line bg-white text-muted hover:border-ink hover:text-ink"
+            } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
+          >
+            {unitNames[u]}
+          </button>
+        ))}
       </div>
 
       {/* 1.8–1.10: 48px buttons + 4px gap + 14px note = 66px, the same for every size. */}

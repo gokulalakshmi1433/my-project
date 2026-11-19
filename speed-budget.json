@@ -1,0 +1,20 @@
+{
+  "description": "Speed and layout budget for the Pegasus 43 product page. Measured on the production build. See docs/performance-trace.md.",
+  "conditions": {
+    "build": "production",
+    "url": "/",
+    "viewport": "375x812",
+    "network": "Slow 4G",
+    "cpu_throttling": 4
+  },
+  "budget": {
+    "performance_score_min": 90,
+    "size_grid_shift_px_max": 0,
+    "size_button_min_px": 48
+  },
+  "notes": {
+    "performance_score_min": "Lighthouse mobile performance score. Passing range is 90 to 100.",
+    "size_grid_shift_px_max": "How far the size grid may move, up/down or sideways, on load and after any interaction. 0 is the strictest value.",
+    "size_button_min_px": "Smallest allowed width and height of each size button."
+  }
+}

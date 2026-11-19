@@ -40,6 +40,19 @@ The requests made to Claude Code during the performance pass, and what was done 
 
 - Added `docs/performance-trace.md` and `docs/prompt-notes.md`.
 
+## 5. Speed budget and size-system row
+
+> performance_score_min -> 90 to 100 / size_grid_shift_px_max -> 0 / size_button_min_px -> 48
+> add speed-budget.json file using the above values
+
+- Added `speed-budget.json` with the three limits and the test conditions.
+- Lighthouse mobile score: 99. Grid shift: 0 px. Size buttons: 56×48 px. All pass.
+
+> US M / US W / EU buttons can be on a new line, aligned with the sizes, instead of in the centre of the row.
+
+- Moved the switch to its own 32 px row. Each button uses the size buttons' 56 px column and 8 px gap, so they line up with the first three sizes.
+- Size grid is 40 px lower (first screen 527 px) and still moves 0 px.
+
 ## Prompts to reuse
 
 Short versions of the requests above, for the next performance pass:
@@ -48,3 +61,4 @@ Short versions of the requests above, for the next performance pass:
 - *Track the size grid's position on load and after every interaction (size error, size system switch, size select, add to cart, spec open, more reviews, size guide). List anything that moves it and why.*
 - *Check the price row and fonts: is the price in the server HTML, does its row have a fixed height, and are any web fonts loaded with a fallback?*
 - *Fix what you find, rebuild, re-trace with the same settings, and give a before/after table.*
+- *Check the build against `speed-budget.json` (Lighthouse mobile score, size grid shift, size button size) and report pass/fail.*
