@@ -16,7 +16,7 @@ Performance trace results and fixes: [docs/performance-trace.md](docs/performanc
 ## Layout rules
 
 - 375px column, 16px side padding (343px content width).
-- First screen is 487px tall, so heading, description, price and rating, photo and sizes fit on an iPhone SE without scrolling.
+- First screen is 527px tall, so heading, description, price and rating, photo, size system (US M / US W / EU) and sizes fit on an iPhone SE without scrolling.
 - Product photo is a fixed 343×257 box; its skeleton is the same size, so nothing shifts while it loads.
 - Size buttons are 56×48 in every state. In stock = rest state, sold out = disabled state (greyed and crossed through). A 14px line under each shows "Sold out" or "Only N left".
 
