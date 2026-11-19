@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pegasus 43 Mobile Size Picker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<style>
+/* Player: one 1920x1080 slide at a time, scaled to fit the window. */
+* { margin: 0; }
+html, body { height: 100%; }
+body { background: #0E0F11; overflow: hidden; font: 32px/1.2 sans-serif; }
+.stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; }
+.stage > section { position: absolute; inset: 0; width: 1920px; height: 1080px; overflow: hidden; display: none !important; }
+.stage > section.on { display: flex !important; }
+aside { display: none; }
+h1, h2, h3 { font-weight: 600; }
+.arrow .arrow-svg { width: 44px; height: 24px; }
+.pg::after { content: none !important; }  /* hidden slides don't count; numbers are set below */
+table { border-collapse: collapse; }
+th { text-align: left; font-weight: 600; padding: .35em .6em; border-bottom: 2px solid currentColor; }
+td { padding: .35em .6em; border-bottom: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
+.hud { position: fixed; left: 0; right: 0; bottom: 14px; display: flex; justify-content: center; align-items: center; gap: 14px; font: 600 14px/1 Inter, Arial, sans-serif; color: #B8BCB2; }
+.hud button { width: 38px; height: 38px; border-radius: 50%; border: 1px solid #3A3F47; background: #16181C; color: #F5F4EE; font-size: 18px; cursor: pointer; }
+.hud button:disabled { opacity: .3; cursor: default; }
+.notes { position: fixed; left: 50%; bottom: 64px; transform: translateX(-50%); width: min(900px, 92vw); max-height: 30vh; overflow: auto; background: #16181C; color: #F5F4EE; border: 1px solid #3A3F47; border-radius: 12px; padding: 16px 20px; font: 16px/1.5 Inter, Arial, sans-serif; display: none; }
+.notes.show { display: block; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+<style>
+:root {
+  --ink: #15171A;
+  --paper: #F5F4EE;
+  --card: #E9E8E0;
+  --line: #CFCDC3;
+  --volt: #D7F23A;
+  --olive: #4A6600;
+  --muted: #55595F;
+  --muted-dark: #B8BCB2;
+  --before: #B9B7AC;
+  --head: 'Space Grotesk', Arial, sans-serif;
+  --text: 'Inter', Arial, sans-serif;
+}
+
+body { font-family: var(--text); color: var(--ink); }
+
+section {
+  box-sizing: border-box;
+  padding: 128px 128px 160px;
+  background: var(--paper);
+  color: var(--ink);
+  counter-increment: page;
+  display: flex;
+  flex-direction: column;
+}
+section.dark { background: var(--ink); color: var(--paper); }
+section.accent { background: var(--volt); color: var(--ink); }
+
+/* Type scale: 120 / 64 / 40 / 30 / 24 */
+.eyebrow { font-family: var(--text); font-size: 24px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--olive); margin: 0 0 16px; }
+.dark .eyebrow { color: var(--volt); }
+.accent .eyebrow { color: var(--ink); }
+.headline { font-family: var(--head); font-size: 64px; font-weight: 600; line-height: 1.1; letter-spacing: -1px; max-width: 1560px; margin: 0; }
+.rule { border: none; border-top: 3px solid var(--ink); margin: 32px 0 40px; }
+.dark .rule { border-top: 3px solid var(--paper); }
+.body { font-size: 30px; line-height: 1.45; color: var(--muted); margin: 0; }
+.dark .body { color: var(--muted-dark); }
+.label { font-size: 24px; line-height: 1.35; color: var(--muted); margin: 0; }
+.dark .label { color: var(--muted-dark); }
+.big { font-family: var(--head); font-size: 120px; font-weight: 600; line-height: 1; letter-spacing: -3px; margin: 0; }
+.title { font-family: var(--head); font-size: 40px; font-weight: 600; line-height: 1.15; margin: 0; }
+
+/* Footer band */
+.footer { position: absolute; left: 128px; bottom: 64px; width: 1664px; display: flex; justify-content: space-between; }
+.ft { font-size: 24px; color: var(--muted); margin: 0; }
+.dark .ft { color: var(--muted-dark); }
+.pg::after { content: counter(page); }
+
+/* So what box */
+.sowhat { background: var(--card); border-left: 8px solid var(--ink); padding: 24px 32px; margin-top: auto; }
+.sowhat p { font-size: 30px; line-height: 1.4; color: var(--ink); margin: 0; }
+
+/* Cards */
+.row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 40px; }
+.card { background: var(--card); border-radius: 24px; padding: 40px; display: flex; flex-direction: column; gap: 16px; }
+.dark .card { background: #24272B; }
+.card .body { font-size: 30px; }
+.icon { width: 56px; height: 56px; color: var(--olive); }
+.dark .icon { color: var(--volt); }
+
+/* Flow of steps */
+.flow { display: flex; align-items: stretch; gap: 0; }
+.step { flex: 1; background: var(--card); border-radius: 24px; padding: 36px; display: flex; flex-direction: column; gap: 16px; }
+.step.hot { background: var(--volt); }
+.arrow { width: 72px; display: flex; align-items: center; justify-content: center; }
+.arrow x-shape { width: 44px; height: 24px; background: var(--ink); }
+.num { font-family: var(--head); font-size: 40px; font-weight: 600; color: var(--olive); margin: 0; }
+.step.hot .num { color: var(--ink); }
+
+/* Tables */
+.tbl { width: 100%; font-size: 26px; color: var(--ink); }
+.dark .tbl { color: var(--paper); }
+
+/* Pills */
+.pills { display: flex; flex-wrap: wrap; gap: 16px; }
+.pill { font-size: 26px; font-weight: 600; background: var(--paper); color: var(--ink); border-radius: 999px; padding: 12px 28px; margin: 0; }
+.dark .pill { background: #24272B; color: var(--paper); }
+.pill.volt { background: var(--volt); color: var(--ink); }
+
+/* Screenshots */
+.shot { box-sizing: border-box; border-radius: 24px; border: 2px solid var(--line); object-fit: contain; background: #FFFFFF; }
+
+/* Bars */
+.bars { display: flex; flex-direction: column; gap: 36px; }
+.bar-row { display: flex; align-items: center; gap: 32px; }
+.bar-name { width: 420px; flex: none; }
+.bar-stack { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.bar-line { display: flex; align-items: center; gap: 20px; }
+.bar-tag { width: 110px; flex: none; font-size: 24px; color: var(--muted); margin: 0; }
+.bar { height: 44px; border-radius: 8px; transform-origin: left center; animation: grow 700ms cubic-bezier(.2,.75,.2,1) both; animation-delay: calc(var(--i, 0) * 140ms + 200ms); }
+.bar.b { background: var(--before); }
+.bar.a { background: var(--ink); }
+.bar-val { font-size: 30px; font-weight: 600; margin: 0; }
+
+/* Motion */
+.rise { animation: rise 500ms cubic-bezier(.2,.75,.2,1) both; animation-delay: calc(var(--i, 0) * 120ms + 150ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+@keyframes grow { from { transform: scaleX(0); } }
+
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+<section id="cover" class="dark cover" style="justify-content:space-between; padding:128px;">
+<div>
+<p class="eyebrow">Case study · Mobile product page</p>
+</div>
+<div>
+<h1 style="font-family:var(--head); font-size:120px; font-weight:600; line-height:1.02; letter-spacing:-3px; margin:0;">Sizes that <span style="color:var(--volt);">stay put</span></h1>
+<p class="body" style="margin-top:32px; max-width:1300px;">Rebuilding the Pegasus 43 product page for phone shoppers, so the size grid never moves under a thumb, even on a slow 4G network.</p>
+</div>
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:40px; border-top:2px solid var(--paper); padding-top:32px;">
+<div class="rise" style="--i:1;"><p class="title" style="font-size:64px; color:var(--volt);">99</p><p class="label">Lighthouse mobile score, live</p></div>
+<div class="rise" style="--i:2;"><p class="title" style="font-size:64px;">1.2 s</p><p class="label">Main photo on slow 4G, was 2.6 s</p></div>
+<div class="rise" style="--i:3;"><p class="title" style="font-size:64px;">0 px</p><p class="label">Size grid movement</p></div>
+<div class="rise" style="--i:4;"><p class="title" style="font-size:64px;">56×48</p><p class="label">Size button, px</p></div>
+</div>
+<aside>This is the Pegasus 43 mobile product page. The problem: phone shoppers found the sizes hard to use. The page followed the desktop layout, and buttons jumped while it loaded. These four numbers are the result, measured on the live site: Lighthouse 99, the main photo in 1.2 seconds on slow 4G, a size grid that moves 0 pixels, and size buttons of 56 by 48 pixels.</aside>
+</section>
+
+<section id="context">
+<p class="eyebrow">Context</p>
+<h2 class="headline">Phone shoppers were reading a desktop page that moved while it loaded.</h2>
+<hr class="rule">
+<div class="row3">
+<div class="card rise" style="--i:1;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><h3 class="title">Pinch to read</h3><p class="body">A desktop layout on a phone, so shoppers zoomed in to read and tap.</p></div>
+<div class="card rise" style="--i:2;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v5"/><path d="M12 18h.01"/></svg><h3 class="title">Jumping buttons</h3><p class="body">Late photos and messages pushed the size grid down mid-tap.</p></div>
+<div class="card rise" style="--i:3;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><h3 class="title">No loading states</h3><p class="body">Blank gaps with no placeholder, so nothing said what was coming.</p></div>
+</div>
+<div class="sowhat"><p><b>So what:</b> sizes are the last step before Add to cart, so a moving target there costs the most.</p></div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker</p><p class="ft pg"></p></div>
+<aside>Why did shoppers find the sizes hard to use? The page followed the desktop layout, so on a phone people had to pinch the screen to read it. While it loaded, buttons and sections jumped, and there was no clear loading state. The size picker is the step right before Add to cart, so this is where the problem hurts most.</aside>
+</section>
+
+<section id="jump">
+<p class="eyebrow">Context</p>
+<h2 class="headline">On a slow network, late content pushes the size grid down right at the tap.</h2>
+<hr class="rule">
+<div class="flow">
+<div class="step rise" style="--i:1;"><p class="num">1</p><h3 class="title">Page starts loading</h3><p class="label">Slow 4G: text first, photos and scripts later.</p></div>
+<div class="arrow rise" style="--i:2;"><svg class="arrow-svg" style="width:44px; height:24px;" viewBox="0 0 44 24" aria-hidden="true"><path d="M0 8h26V0l18 12-18 12v-8H0z" fill="var(--ink)"/></svg></div>
+<div class="step rise" style="--i:2;"><p class="num">2</p><h3 class="title">Shopper aims at a size</h3><p class="label">Their thumb heads for the size they want.</p></div>
+<div class="arrow rise" style="--i:3;"><svg class="arrow-svg" style="width:44px; height:24px;" viewBox="0 0 44 24" aria-hidden="true"><path d="M0 8h26V0l18 12-18 12v-8H0z" fill="var(--ink)"/></svg></div>
+<div class="step rise" style="--i:3;"><p class="num">3</p><h3 class="title">Late content arrives</h3><p class="label">A photo, banner or message lands above the grid.</p></div>
+<div class="arrow rise" style="--i:4;"><svg class="arrow-svg" style="width:44px; height:24px;" viewBox="0 0 44 24" aria-hidden="true"><path d="M0 8h26V0l18 12-18 12v-8H0z" fill="var(--ink)"/></svg></div>
+<div class="step hot rise" style="--i:4;"><p class="num">4</p><h3 class="title">The grid drops</h3><p class="label" style="color:var(--ink);">The thumb lands on the wrong size or button.</p></div>
+</div>
+<div class="sowhat"><p><b>So what:</b> a faster page alone isn’t enough. The grid has to keep its place whatever arrives late.</p></div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker</p><p class="ft pg"></p></div>
+<aside>Here is how a wrong tap happens. On a slow network the text comes first and the photos and scripts later. The shopper aims at their size. Then a photo or message arrives above the grid and pushes it down, and the thumb lands on the wrong size or the wrong button. So speed alone doesn’t fix it: the grid has to stay in place no matter what loads late.</aside>
+</section>
+
+<section id="impact" class="accent" style="justify-content:center;">
+<p class="eyebrow">Impact</p>
+<h2 class="headline" style="max-width:1500px;">When the grid moves, shoppers tap the wrong size, get frustrated and leave before Add to cart.</h2>
+<div class="pills rise" style="--i:1; margin-top:56px; align-items:center;">
+<p class="pill" style="background:var(--ink); color:var(--paper);">Grid moves</p>
+<svg class="arrow-svg" style="width:44px; height:24px; " viewBox="0 0 44 24" aria-hidden="true"><path d="M0 8h26V0l18 12-18 12v-8H0z" fill="var(--ink)"/></svg>
+<p class="pill" style="background:var(--ink); color:var(--paper);">Wrong tap</p>
+<svg class="arrow-svg" style="width:44px; height:24px; " viewBox="0 0 44 24" aria-hidden="true"><path d="M0 8h26V0l18 12-18 12v-8H0z" fill="var(--ink)"/></svg>
+<p class="pill" style="background:var(--ink); color:var(--paper);">Frustration</p>
+<svg class="arrow-svg" style="width:44px; height:24px; " viewBox="0 0 44 24" aria-hidden="true"><path d="M0 8h26V0l18 12-18 12v-8H0z" fill="var(--ink)"/></svg>
+<p class="pill" style="background:var(--ink); color:var(--paper);">Lost sale</p>
+</div>
+<div class="rise" style="--i:2; margin-top:56px; background:var(--ink); border-radius:24px; padding:32px 40px; max-width:1300px;">
+<p class="label" style="color:var(--volt); font-weight:600; letter-spacing:4px; text-transform:uppercase;">Measure next</p>
+<p class="body" style="color:var(--paper); margin-top:8px;">Add-to-cart rate after a size tap, before vs after the new page: [__%]</p>
+</div>
+<div class="footer"><p class="ft" style="color:var(--ink);">Pegasus 43 · Mobile size picker</p><p class="ft pg" style="color:var(--ink);"></p></div>
+<aside>The impact is lost sales. Jumping buttons, jumping screens and poor loading states make shoppers tap the wrong size or the wrong button. That frustrates them, and many leave before Add to cart. Most of the audience shops on a phone, so this matters. We haven’t measured sales yet: the next step is to compare the add-to-cart rate after a size tap, before and after the new page.</aside>
+</section>
+
+<section id="fix">
+<p class="eyebrow">Fix</p>
+<h2 class="headline">A mobile-first page where every block above the sizes has a fixed height.</h2>
+<hr class="rule">
+<div style="display:flex; gap:64px; align-items:flex-start;">
+<img class="shot rise" style="--i:1; width:240px; height:520px; flex:none;" src="../screenshots/01-initial.png" alt="Live Pegasus 43 page on a 375 px phone: title, description, $140 price, shoe photo, Select size row, US M, US W and EU buttons, and the size grid starting at 3.5 Only 1 left">
+<div class="rise" style="--i:2; flex:1; display:flex; flex-direction:column; gap:24px;">
+<table class="tbl">
+<tr><th style="width:32%;">Block</th><th style="width:22%;">Size</th><th style="width:46%;">Why it can’t move</th></tr>
+<tr><td>Title</td><td>24 px, 1 line</td><td>Long names end in “…”</td></tr>
+<tr><td>Description</td><td>40 px, 2 lines</td><td>Clamped to two lines</td></tr>
+<tr><td>Price and rating</td><td>24 px</td><td>Price is in the server HTML</td></tr>
+<tr><td>Photo</td><td>343×257</td><td>Same-size shimmer placeholder</td></tr>
+<tr><td>“Select size” row</td><td>20 px</td><td>Error text swaps in place</td></tr>
+<tr><td>US M / US W / EU</td><td>32 px</td><td>Own row, lined up with sizes</td></tr>
+<tr><td>Size grid</td><td>66 px</td><td>48 px buttons + 14 px note</td></tr>
+</table>
+<p class="body">First screen: 527 px, so the whole size picker fits on an iPhone SE without scrolling.</p>
+</div>
+</div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker</p><p class="ft pg"></p></div>
+<aside>The fix is a mobile layout where the buttons and the layout stay still, even on a slow network. Every block above the sizes has a fixed height: the title, the description, the price row, the photo, the label row and the size-system row. The photo has a shimmer placeholder of exactly the same size, so nothing jumps when it loads. Because nothing above the grid can grow, nothing can push it down.</aside>
+</section>
+
+<section id="states">
+<p class="eyebrow">Fix</p>
+<h2 class="headline">Every state changes colour, never size.</h2>
+<hr class="rule">
+<div class="row3">
+<div class="rise" style="--i:1; display:flex; flex-direction:column; gap:16px;"><img class="shot" style="width:528px; height:263px;" src="img/no-size.png" alt="Size picker showing the red error Please select a size above the US M, US W, EU row and the size buttons"><h3 class="title">No size chosen</h3><p class="label">Buy now without a size: “Please select a size” replaces the label in the same 20 px row.</p></div>
+<div class="rise" style="--i:2; display:flex; flex-direction:column; gap:16px;"><img class="shot" style="width:528px; height:263px;" src="img/low-stock-selected.png" alt="Size 3.5 selected with a dark ring, Only 1 left below it, 4.5 crossed out as sold out"><h3 class="title">Low stock, selected</h3><p class="label">3.5 gets a dark ring inside the button. Still 56×48, and “Only 1 left” stays below.</p></div>
+<div class="rise" style="--i:3; display:flex; flex-direction:column; gap:16px;"><img class="shot" style="width:528px; height:263px;" src="img/switched-to-eu.png" alt="EU selected, sizes shown as 35.5 to 38, with EU 38 selected"><h3 class="title">Switched to EU</h3><p class="label">Labels change to EU sizes. 5.5 becomes EU 38 and stays selected. Nothing moves.</p></div>
+</div>
+<div class="sowhat"><p><b>So what:</b> on the live site the size grid stayed at 461 px from the top through all seven taps.</p></div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker. Screenshots: live site, 375×812</p><p class="ft pg"></p></div>
+<aside>These are screenshots from the live site. When a shopper taps Buy now without a size, the error replaces the label in the same row, so nothing moves. A selected size gets a ring inside the button, so it stays 56 by 48. Switching to EU changes the labels, and the selected size carries over. Every state changes colour, never size, so the grid stays still.</aside>
+</section>
+
+<section id="approach">
+<p class="eyebrow">Approach</p>
+<h2 class="headline">We designed the phone screen first, then planned what happens in every case.</h2>
+<hr class="rule">
+<div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:0;">
+<div class="rise" style="--i:1; display:flex; flex-direction:column; gap:20px;"><div style="display:flex; align-items:center;"><div style="flex:1; height:3px;"></div><div style="width:88px; height:88px; border-radius:44px; background:var(--ink); display:flex; align-items:center; justify-content:center;"><p class="num" style="color:var(--volt);">1</p></div><div style="flex:1; height:3px; background:var(--ink);"></div></div><h3 class="title" style="text-align:center; min-height:92px; padding:0 12px;">Mobile layout first</h3><p class="label" style="text-align:center; padding:0 12px;">375 px column, 16 px sides. No pinching.</p></div>
+<div class="rise" style="--i:2; display:flex; flex-direction:column; gap:20px;"><div style="display:flex; align-items:center;"><div style="flex:1; height:3px; background:var(--ink);"></div><div style="width:88px; height:88px; border-radius:44px; background:var(--ink); display:flex; align-items:center; justify-content:center;"><p class="num" style="color:var(--volt);">2</p></div><div style="flex:1; height:3px; background:var(--ink);"></div></div><h3 class="title" style="text-align:center; min-height:92px; padding:0 12px;">Decide the order</h3><p class="label" style="text-align:center; padding:0 12px;">Product, price, photo, size system and sizes on the first screen.</p></div>
+<div class="rise" style="--i:3; display:flex; flex-direction:column; gap:20px;"><div style="display:flex; align-items:center;"><div style="flex:1; height:3px; background:var(--ink);"></div><div style="width:88px; height:88px; border-radius:44px; background:var(--ink); display:flex; align-items:center; justify-content:center;"><p class="num" style="color:var(--volt);">3</p></div><div style="flex:1; height:3px; background:var(--ink);"></div></div><h3 class="title" style="text-align:center; min-height:92px; padding:0 12px;">Plan every case</h3><p class="label" style="text-align:center; padding:0 12px;">Tap a size, a sold-out size, no size, switch system, scroll.</p></div>
+<div class="rise" style="--i:4; display:flex; flex-direction:column; gap:20px;"><div style="display:flex; align-items:center;"><div style="flex:1; height:3px; background:var(--ink);"></div><div style="width:88px; height:88px; border-radius:44px; background:var(--volt); border:3px solid var(--ink); box-sizing:border-box; display:flex; align-items:center; justify-content:center;"><p class="num" style="color:var(--ink);">4</p></div><div style="flex:1; height:3px; background:var(--ink);"></div></div><h3 class="title" style="text-align:center; min-height:92px; padding:0 12px;">Fix every size</h3><p class="label" style="text-align:center; padding:0 12px;">Heights and placeholders that never change while loading.</p></div>
+<div class="rise" style="--i:5; display:flex; flex-direction:column; gap:20px;"><div style="display:flex; align-items:center;"><div style="flex:1; height:3px; background:var(--ink);"></div><div style="width:88px; height:88px; border-radius:44px; background:var(--ink); display:flex; align-items:center; justify-content:center;"><p class="num" style="color:var(--volt);">5</p></div><div style="flex:1; height:3px;"></div></div><h3 class="title" style="text-align:center; min-height:92px; padding:0 12px;">Measure on slow 4G</h3><p class="label" style="text-align:center; padding:0 12px;">Lighthouse and DevTools, CPU 4× slower, local then live.</p></div>
+</div>
+<div class="sowhat"><p><b>So what:</b> planning each case up front meant every state was built to keep its size, not patched later.</p></div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker</p><p class="ft pg"></p></div>
+<aside>We started with the structure of the mobile layout. Then we decided what comes first and what comes next on the screen, and what happens in each case: tapping a size, tapping a sold-out size, tapping Buy now with no size, switching the size system, and scrolling. Then we fixed every size, and measured on a slow 4G profile with the CPU four times slower, first locally and then on the live site.</aside>
+</section>
+
+<section id="cases">
+<p class="eyebrow">Approach</p>
+<h2 class="headline">Seven taps on the live site, and the size grid never moved.</h2>
+<hr class="rule">
+<table class="tbl rise" style="--i:1;">
+<tr><th style="width:6%;">#</th><th style="width:28%;">Tap</th><th style="width:50%;">What the shopper sees</th><th style="width:16%;">Grid top</th></tr>
+<tr><td>1</td><td>Page loaded</td><td>“Select size”; 3.5 “Only 1 left”; 4.5 “Sold out”</td><td>461 px</td></tr>
+<tr><td>2</td><td>Buy now, no size</td><td>Red “Please select a size”; focus moves to 3.5</td><td>461 px</td></tr>
+<tr><td>3</td><td>4.5, sold out</td><td>Can’t be selected; the error stays</td><td>461 px</td></tr>
+<tr><td>4</td><td>3.5, low stock</td><td>Selected; the error clears</td><td>461 px</td></tr>
+<tr><td>5</td><td>5.5, in stock</td><td>Selected, replacing 3.5</td><td>461 px</td></tr>
+<tr><td>6</td><td>EU</td><td>EU labels; 5.5 becomes EU 38, still selected</td><td>461 px</td></tr>
+<tr><td>7</td><td>Add to cart</td><td>“Added Nike Pegasus 43, EU 38 to cart”</td><td>461 px</td></tr>
+</table>
+<div class="footer"><p class="ft">Live site, Chrome DevTools phone emulation, 375×812, 8 December 2026 stock</p><p class="ft pg"></p></div>
+<aside>These are the seven cases we planned, tested on the live site. For each tap the shopper sees the right state, and the size grid stays at 461 pixels from the top every time. That is what stops accidental taps: the target is always where the shopper expects it.</aside>
+</section>
+
+<section id="lighthouse" class="dark">
+<p class="eyebrow">Measures</p>
+<h2 class="headline">Lighthouse scores the live page 99 on a slow phone profile.</h2>
+<hr class="rule">
+<div style="display:flex; gap:96px; align-items:center;">
+<div class="rise" style="--i:1; position:relative; width:440px; height:440px; flex:none;">
+<svg aria-label="Ring gauge filled to 99 out of 100" width="440" height="440" viewBox="0 0 440 440"><circle cx="220" cy="220" r="190" fill="none" stroke="#24272B" stroke-width="28"/><circle cx="220" cy="220" r="190" fill="none" stroke="#D7F23A" stroke-width="28" stroke-linecap="round" stroke-dasharray="1181.9 1193.8" transform="rotate(-90 220 220)"/></svg>
+<p class="big" style="position:absolute; left:0; top:150px; width:440px; text-align:center; color:var(--volt);">99</p>
+<p class="label" style="position:absolute; left:0; top:286px; width:440px; text-align:center;">out of 100, target ≥ 90</p>
+</div>
+<table class="tbl rise" style="--i:2; flex:1;">
+<tr><th style="width:56%;">Metric</th><th style="width:22%;">Live</th><th style="width:22%;">Score</th></tr>
+<tr><td>First Contentful Paint</td><td>1.0 s</td><td>1.00</td></tr>
+<tr><td>Largest Contentful Paint</td><td>1.0 s</td><td>1.00</td></tr>
+<tr><td>Total Blocking Time</td><td>20 ms</td><td>1.00</td></tr>
+<tr><td>Cumulative Layout Shift</td><td>0</td><td>1.00</td></tr>
+<tr><td>Speed Index</td><td>3.4 s</td><td>0.89</td></tr>
+<tr><td>Server response (Vercel)</td><td>30 ms</td><td>1.00</td></tr>
+</table>
+</div>
+<div class="footer"><p class="ft">Lighthouse 12.8.2 · mobile · simulated slow 4G, CPU 4× · live Vercel URL · 19 Nov 2026</p><p class="ft pg"></p></div>
+<aside>We measured the live URL with Lighthouse, mobile, on a simulated slow 4G network with the CPU four times slower. The score is 99 out of 100, against our target of 90. Layout shift is 0, so nothing moves while the page loads. Speed Index is the only metric below a full score.</aside>
+</section>
+
+<section id="beforeafter">
+<p class="eyebrow">Measures</p>
+<h2 class="headline">Showing photos without waiting for JavaScript halved the main photo time.</h2>
+<hr class="rule">
+<div class="bars">
+<div class="bar-row"><p class="body bar-name" style="color:var(--ink); font-weight:600;">First paint</p><div class="bar-stack">
+<div class="bar-line"><p class="bar-tag">Before</p><div class="bar b" style="--i:1; width:459px;"></div><p class="bar-val">1.31 s</p></div>
+<div class="bar-line"><p class="bar-tag">After</p><div class="bar a" style="--i:2; width:231px;"></div><p class="bar-val">0.66 s</p></div>
+</div></div>
+<div class="bar-row"><p class="body bar-name" style="color:var(--ink); font-weight:600;">Main photo (LCP)</p><div class="bar-stack">
+<div class="bar-line"><p class="bar-tag">Before</p><div class="bar b" style="--i:3; width:900px;"></div><p class="bar-val">2.57 s</p></div>
+<div class="bar-line"><p class="bar-tag">After</p><div class="bar a" style="--i:4; width:417px;"></div><p class="bar-val">1.19 s</p></div>
+</div></div>
+<div class="bar-row"><p class="body bar-name" style="color:var(--ink); font-weight:600;">Photo waiting to show</p><div class="bar-stack">
+<div class="bar-line"><p class="bar-tag">Before</p><div class="bar b" style="--i:5; width:497px;"></div><p class="bar-val">1.42 s</p></div>
+<div class="bar-line"><p class="bar-tag">After</p><div class="bar a" style="--i:6; width:21px;"></div><p class="bar-val">0.06 s</p></div>
+</div></div>
+</div>
+<div class="sowhat"><p><b>So what:</b> on slow 4G with the CPU 4× slower, the page now paints in 0.7 s and shows the main photo in 1.2 s.</p></div>
+<div class="footer"><p class="ft">Chrome DevTools trace · production build · Slow 4G, CPU 4× · 375×812 · lower is better</p><p class="ft pg"></p></div>
+<aside>Before the fix, the main photo had already downloaded but stayed hidden for about one and a half seconds, waiting for JavaScript. Now photos show straight from the HTML, and the styles come inside the page. First paint went from 1.3 to 0.7 seconds, and the main photo from 2.6 to 1.2 seconds.</aside>
+</section>
+
+<section id="budget">
+<p class="eyebrow">Measures</p>
+<h2 class="headline">A speed budget sets the limits every future change has to pass.</h2>
+<hr class="rule">
+<div class="row3">
+<div class="card rise" style="--i:1;"><p class="label">Lighthouse mobile score</p><p class="big">≥ 90</p><p class="label">performance_score_min</p><div style="display:flex; align-items:center; gap:12px; border-top:2px solid var(--line); padding-top:20px;"><svg style="width:40px; height:40px; color:var(--olive);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><p class="body" style="color:var(--ink);"><b>Live: 99</b>, pass</p></div></div>
+<div class="card rise" style="--i:2;"><p class="label">Size grid movement</p><p class="big">0 px</p><p class="label">size_grid_shift_px_max</p><div style="display:flex; align-items:center; gap:12px; border-top:2px solid var(--line); padding-top:20px;"><svg style="width:40px; height:40px; color:var(--olive);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><p class="body" style="color:var(--ink);"><b>Live: 0 px</b>, pass</p></div></div>
+<div class="card rise" style="--i:3;"><p class="label">Size button, px</p><p class="big">≥ 48</p><p class="label">size_button_min_px</p><div style="display:flex; align-items:center; gap:12px; border-top:2px solid var(--line); padding-top:20px;"><svg style="width:40px; height:40px; color:var(--olive);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><p class="body" style="color:var(--ink);"><b>Live: 56×48</b>, pass</p></div></div>
+</div>
+<div class="sowhat"><p><b>So what:</b> the limits live in speed-budget.json in the repo, so every change can be checked against the same three numbers.</p></div>
+<div class="footer"><p class="ft">speed-budget.json · checked on the live URL, 19 Nov 2026</p><p class="ft pg"></p></div>
+<aside>The speed budget protects the work. It is a file in the repo with three limits: a Lighthouse mobile score of at least 90, a size grid that moves 0 pixels, and size buttons of at least 48 pixels. The live site passes all three: 99, 0 pixels and 56 by 48. Keeping the grid still while the page loads is what prevents accidental taps.</aside>
+</section>
+
+<section id="built">
+<p class="eyebrow">How it was built</p>
+<h2 class="headline">Built with a small, modern stack and tested on a slow phone profile.</h2>
+<hr class="rule">
+<div class="row3">
+<div class="card rise" style="--i:1;"><h3 class="title">Build</h3><div class="pills"><p class="pill">Next.js 16</p><p class="pill">Tailwind CSS 4</p><p class="pill">Claude Code</p></div><p class="label">Claude Code built, traced and fixed the page with us.</p></div>
+<div class="card rise" style="--i:2;"><h3 class="title">Ship</h3><div class="pills"><p class="pill">GitHub</p><p class="pill">Vercel</p></div><p class="label">Pull requests on GitHub. Vercel deploys main to the live URL.</p></div>
+<div class="card rise" style="--i:3;"><h3 class="title">Test</h3><div class="pills"><p class="pill">Lighthouse</p><p class="pill">Chrome DevTools MCP</p></div><p class="label">Slow 4G, CPU 4× slower, 375×812, on the live URL.</p></div>
+</div>
+<div class="pills rise" style="--i:4; margin-top:auto; align-items:center;"><p class="label" style="color:var(--ink); font-weight:600;">Live site</p><p class="pill volt">my-project-sable-seven-91.vercel.app</p></div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker</p><p class="ft pg"></p></div>
+<aside>We built the page with Next.js and Tailwind CSS, using Claude Code. The code is saved on GitHub, and Vercel deploys it to the live URL. We checked the speed with Lighthouse and Chrome DevTools, connected through MCP, on a slow 4G network with the CPU four times slower.</aside>
+</section>
+
+<section id="insights" class="dark">
+<p class="eyebrow">Key insights</p>
+<h2 class="headline">What building it taught us</h2>
+<hr class="rule">
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:40px;">
+<div class="card rise" style="--i:1;"><div style="display:flex; gap:20px; align-items:baseline;"><p class="num" style="color:var(--volt);">01</p><h3 class="title">Keep the grid still</h3></div><p class="body">People tap where the size was a moment ago. A still grid stops accidental taps.</p></div>
+<div class="card rise" style="--i:2;"><div style="display:flex; gap:20px; align-items:baseline;"><p class="num" style="color:var(--volt);">02</p><h3 class="title">Reserve every space</h3></div><p class="body">Fixed heights and same-size shimmers let late content fill a gap, not push.</p></div>
+<div class="card rise" style="--i:3;"><div style="display:flex; gap:20px; align-items:baseline;"><p class="num" style="color:var(--volt);">03</p><h3 class="title">Don’t make photos wait</h3></div><p class="body">The photo had downloaded but stayed hidden for JavaScript. Showing it halved LCP.</p></div>
+<div class="card rise" style="--i:4;"><div style="display:flex; gap:20px; align-items:baseline;"><p class="num" style="color:var(--volt);">04</p><h3 class="title">Measure slow, measure live</h3></div><p class="body">Slow 4G, CPU 4×, the live URL: that turned “feels faster” into a 99.</p></div>
+</div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker</p><p class="ft pg"></p></div>
+<aside>The key insight: the size grid has to stay still while the page loads. If it moves, shoppers tap the wrong size or the wrong button and get frustrated. Fixed sizes and same-size placeholders keep every element in place. Showing photos without waiting for JavaScript made the page much faster. And measuring on a slow phone profile, on the live site, proved it works.</aside>
+</section>
+
+<section id="next">
+<p class="eyebrow">What’s next</p>
+<h2 class="headline">Next: prove it on real phones and in sales.</h2>
+<hr class="rule">
+<div class="row3">
+<div class="card rise" style="--i:1;"><h3 class="title">Now</h3><p class="label">A working live page</p><ul class="body" style="margin:8px 0 0; padding-left:36px;"><li>Live on Vercel</li><li>Lighthouse 99, grid shift 0 px</li><li>8 December 2026 stock</li></ul></div>
+<div class="card rise" style="--i:2;"><h3 class="title">Next</h3><p class="label">Prove it with shoppers</p><ul class="body" style="margin:8px 0 0; padding-left:36px;"><li>Test on real iPhone and Android</li><li>Track size tap → Add to cart</li><li>Remove ~14 kB of old-browser code</li></ul></div>
+<div class="card rise" style="--i:3;"><h3 class="title">Later</h3><p class="label">Keep it fast</p><ul class="body" style="margin:8px 0 0; padding-left:36px;"><li>Connect live stock</li><li>Check the speed budget on every pull request</li><li>Real product photos</li></ul></div>
+</div>
+<div class="footer"><p class="ft">Pegasus 43 · Mobile size picker · my-project-sable-seven-91.vercel.app</p><p class="ft pg"></p></div>
+<aside>Today we have a working live page that scores 99 and keeps the grid still. Next we need to test it on real iPhones and Android phones, and measure the real impact: how many shoppers go from a size tap to Add to cart. Later we can connect live stock, check the speed budget automatically on every pull request, and add real product photos.</aside>
+</section>
+
+</div>
+<div class="notes" id="notes" role="note" aria-live="polite"></div>
+<div class="hud">
+<button id="prev" aria-label="Previous slide">&lsaquo;</button>
+<span id="count" aria-live="polite"></span>
+<button id="next" aria-label="Next slide">&rsaquo;</button>
+<span>&nbsp;←/→ to move · N for speaker notes</span>
+</div>
+<script>
+const stage = document.getElementById('stage');
+const slides = [...stage.children].filter(el => el.tagName === 'SECTION');
+const count = document.getElementById('count');
+const notes = document.getElementById('notes');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+slides.forEach((s, k) => s.querySelectorAll('.pg').forEach(p => { p.textContent = String(k + 1); }));
+let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.replace('#slide-', ''), 10) || 1) - 1));
+
+function fit() {
+  const s = Math.min(innerWidth / 1920, (innerHeight - 60) / 1080);
+  stage.style.transform = `scale(${s}) translate(-50%, -50%)`;
+  stage.style.marginTop = '-30px';
+}
+
+function show(n) {
+  i = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, k) => s.classList.toggle('on', k === i));
+  count.textContent = `${i + 1} / ${slides.length}`;
+  const aside = slides[i].querySelector('aside');
+  notes.textContent = aside ? aside.textContent : '';
+  prev.disabled = i === 0;
+  next.disabled = i === slides.length - 1;
+  history.replaceState(null, '', `#slide-${i + 1}`);
+}
+
+prev.onclick = () => show(i - 1);
+next.onclick = () => show(i + 1);
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') show(i + 1);
+  if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(i - 1);
+  if (e.key === 'Home') show(0);
+  if (e.key === 'End') show(slides.length - 1);
+  if (e.key === 'n' || e.key === 'N') notes.classList.toggle('show');
+});
+addEventListener('resize', fit);
+fit();
+show(i);
+</script>
+</body>
+</html>
